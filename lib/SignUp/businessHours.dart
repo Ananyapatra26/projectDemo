@@ -1,7 +1,37 @@
+import 'dart:convert';
+
+import 'package:demoproject/SignUp/signUpModelClass.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import '../urls.dart';
 
 class BusinessHours extends StatefulWidget {
-  const BusinessHours({super.key});
+  final String fullName;
+  final String email;
+  final String phone;
+  final String password;
+  final String reEnterPassword;
+  final String businessName;
+  final String informalName;
+  final String streetAddress;
+  final String city;
+  final String state;
+  final String zipcode;
+  final String pdfFilePath;
+  const BusinessHours(
+      {required this.fullName,
+      required this.email,
+      required this.phone,
+      required this.password,
+      required this.reEnterPassword,
+      required this.businessName,
+      required this.informalName,
+      required this.streetAddress,
+     required this.city,
+      required this.state,
+      required this.zipcode,
+      required this.pdfFilePath});
 
   @override
   State<BusinessHours> createState() => _BusinessHoursState();
@@ -26,7 +56,7 @@ class _BusinessHoursState extends State<BusinessHours> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: deviceHeight*0.03),
+            SizedBox(height: deviceHeight * 0.03),
             Text(
               "Signup 4 of 4",
               style: TextStyle(
@@ -34,7 +64,7 @@ class _BusinessHoursState extends State<BusinessHours> {
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: deviceHeight*0.03),
+            SizedBox(height: deviceHeight * 0.03),
             Text(
               "Business Hours",
               style: TextStyle(
@@ -42,7 +72,7 @@ class _BusinessHoursState extends State<BusinessHours> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: deviceHeight*0.03),
+            SizedBox(height: deviceHeight * 0.03),
             Text(
               "Choose the hours your farm is open for pickups.\nThis will allow customers to order deliveries.",
               style: TextStyle(
@@ -50,7 +80,7 @@ class _BusinessHoursState extends State<BusinessHours> {
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: deviceHeight*0.03),
+            SizedBox(height: deviceHeight * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -63,27 +93,30 @@ class _BusinessHoursState extends State<BusinessHours> {
                 _dayButton('Su'),
               ],
             ),
-            SizedBox(height: deviceHeight*0.03),
+            SizedBox(height: deviceHeight * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: deviceHeight*0.03),
+                SizedBox(height: deviceHeight * 0.03),
                 _timeSlot("8:00am - 10:00am", isSelected: true),
-                SizedBox(height: deviceHeight*0.03),
+                SizedBox(height: deviceHeight * 0.03),
                 _timeSlot("10:00am - 1:00pm", isSelected: true),
               ],
             ),
-            SizedBox(height: deviceHeight*0.01,width:deviceWidth *0.02,),
+            SizedBox(
+              height: deviceHeight * 0.01,
+              width: deviceWidth * 0.02,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: deviceHeight*0.03),
+                SizedBox(height: deviceHeight * 0.03),
                 _timeSlot("1:00pm - 4:00pm"),
-                SizedBox(height: deviceHeight*0.03),
+                SizedBox(height: deviceHeight * 0.03),
                 _timeSlot("4:00pm - 7:00pm"),
               ],
             ),
-            SizedBox(height: deviceHeight*0.01 ),
+            SizedBox(height: deviceHeight * 0.01),
             _timeSlot("7:00pm - 10:00pm"),
             Spacer(),
             Row(
@@ -92,16 +125,16 @@ class _BusinessHoursState extends State<BusinessHours> {
                 Spacer(),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown.shade300,
+                    backgroundColor: Colors.deepOrange.shade600,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 8),
                   ),
                   onPressed: () {
                     // Handle signup action
                   },
-                  child: Text("Signup"),
+                  child: Text("Signup",style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ],
             ),
@@ -118,7 +151,6 @@ class _BusinessHoursState extends State<BusinessHours> {
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-
       child: Text(
         day,
         style: TextStyle(
@@ -145,4 +177,57 @@ class _BusinessHoursState extends State<BusinessHours> {
       ),
     );
   }
+
+  bool isLoading = false;
+  Future<void> Signups(BuildContext context) async {
+    isLoading = true; // Set loading to true when sign-up begins
+    try {
+      final response = await http.post(
+        Uri.parse(signUp),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+          SignUpModelClass(
+         fullName:widget.fullName,
+           email:widget.email,
+           phone: widget.phone,
+         password: widget.password,
+        role:"ananya",
+          businessName:widget.businessName,
+           informalName: widget.informalName,
+          address: widget.streetAddress,
+           city: widget.city,
+           state: widget.state,
+           zipCode: int.parse(widget.zipcode),
+           registrationProof: widget.pdfFilePath,
+
+
+          ),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        // Show success Flushbar or similar
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => Bhakta_SignIn()),
+        // );
+      } else if (response.statusCode == 202) {
+        // Handle specific case for 202 status code
+        print('Signup Accepted: Pending further processing.');
+      } else {
+        // Handle other status codes or error responses
+        print('Signup Failed: Unexpected response ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Signup Failed: $e');
+    } finally {
+      isLoading = false;
+
+    }
+  }
+
+
+
 }

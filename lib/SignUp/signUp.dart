@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'firmInfo.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -9,7 +10,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  String? selectedValue; // Holds the selected value for the dropdown
+  String? selectedValue;
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _reEnterPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,18 +59,35 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               SizedBox(height: deviceHeight * 0.05),
-              _buildTextField(labelText: "Full Name", icon: Icons.person),
+              _buildTextField(
+                labelText: "Full Name",
+                icon: Icons.person,
+                controller: _fullNameController,
+              ),
               SizedBox(height: deviceHeight * 0.02),
-              _buildTextField(labelText: "Email Address", icon: Icons.email),
+              _buildTextField(
+                labelText: "Email Address",
+                icon: Icons.email,
+                controller: _emailController,
+              ),
               SizedBox(height: deviceHeight * 0.02),
-
-              _buildTextField(labelText: "Phone Number", icon: Icons.phone),
+              _buildTextField(
+                labelText: "Phone Number",
+                icon: Icons.phone,
+                controller: _phoneController,
+              ),
               SizedBox(height: deviceHeight * 0.02),
-
-              _buildTextField(labelText: "Password", icon: Icons.lock),
+              _buildTextField(
+                labelText: "Password",
+                icon: Icons.lock,
+                controller: _passwordController,
+              ),
               SizedBox(height: deviceHeight * 0.02),
-
-              _buildTextField(labelText: "Re-enter Password", icon: Icons.lock),
+              _buildTextField(
+                labelText: "Re-enter Password",
+                icon: Icons.lock,
+                controller: _reEnterPasswordController,
+              ),
               SizedBox(height: deviceHeight * 0.02),
               // Add dropdown here
               SizedBox(height: deviceHeight * 0.04),
@@ -79,8 +102,19 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Farminfo()));
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Farminfo(
+                            fullName: _fullNameController.text,
+                            email: _emailController.text,
+                            phone: _phoneController.text,
+                            password: _passwordController.text,
+                            reEnterPassword: _reEnterPasswordController.text,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepOrange.shade600,
@@ -103,8 +137,13 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildTextField({required String labelText, required IconData icon}) {
+  Widget _buildTextField({
+    required String labelText,
+    required IconData icon,
+    required TextEditingController controller,
+  }) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         prefixIcon: Icon(icon),
         labelText: labelText,
@@ -118,8 +157,6 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-
-
   Widget _buildSocialMediaIcon(String assetPath) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5.0),
@@ -132,9 +169,7 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),
       child: GestureDetector(
-        onTap: () {
-
-        },
+        onTap: () {},
         child: Image.asset(
           assetPath,
           width: 50,

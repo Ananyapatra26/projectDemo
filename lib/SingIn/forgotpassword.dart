@@ -17,7 +17,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30.0),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
+
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: deviceHeight * 0.25),
