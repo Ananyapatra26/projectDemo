@@ -132,7 +132,7 @@ class _BusinessHoursState extends State<BusinessHours> {
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 8),
                   ),
                   onPressed: () {
-                    // Handle signup action
+                    registerUser();
                   },
                   child: Text("Signup",style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
@@ -179,8 +179,8 @@ class _BusinessHoursState extends State<BusinessHours> {
   }
 
   bool isLoading = false;
-  Future<void> Signups(BuildContext context) async {
-    isLoading = true; // Set loading to true when sign-up begins
+ /* Future<void> Signups(BuildContext context) async {
+    isLoading = true;
     try {
       final response = await http.post(
         Uri.parse(signUp),
@@ -193,7 +193,7 @@ class _BusinessHoursState extends State<BusinessHours> {
            email:widget.email,
            phone: widget.phone,
          password: widget.password,
-        role:"ananya",
+        role:"Manager",
           businessName:widget.businessName,
            informalName: widget.informalName,
           address: widget.streetAddress,
@@ -201,8 +201,6 @@ class _BusinessHoursState extends State<BusinessHours> {
            state: widget.state,
            zipCode: int.parse(widget.zipcode),
            registrationProof: widget.pdfFilePath,
-
-
           ),
         ),
       );
@@ -214,7 +212,6 @@ class _BusinessHoursState extends State<BusinessHours> {
         //   MaterialPageRoute(builder: (context) => Bhakta_SignIn()),
         // );
       } else if (response.statusCode == 202) {
-        // Handle specific case for 202 status code
         print('Signup Accepted: Pending further processing.');
       } else {
         // Handle other status codes or error responses
@@ -226,8 +223,51 @@ class _BusinessHoursState extends State<BusinessHours> {
       isLoading = false;
 
     }
+  }*/
+
+  Future<void> registerUser() async {
+    final Map<String, dynamic> userData = {
+      "full_name": widget.fullName,
+      "email": widget.email,
+      "phone": widget.phone,
+      "password": widget.password,
+      "role": "Manager",
+      "business_name": widget.businessName,
+      "informal_name": widget.informalName,
+      "address": widget.streetAddress,
+      "city": widget.city,
+      "state": widget.state,
+      "zip_code": int.parse(widget.zipcode),
+      "registration_proof": widget.pdfFilePath,
+      "business_hours": {
+        "mon": ["8:00am - 10:00am", "10:00am - 1:00pm"],
+        "tue": ["8:00am - 10:00am", "10:00am - 1:00pm"],
+        "wed": ["8:00am - 10:00am", "10:00am - 1:00pm", "1:00pm - 4:00pm"],
+        "thu": ["8:00am - 10:00am", "10:00am - 1:00pm", "1:00pm - 4:00pm"],
+        "fri": ["8:00am - 10:00am", "10:00am - 1:00pm"],
+        "sat": ["8:00am - 10:00am", "10:00am - 1:00pm"],
+        "sun": ["8:00am - 10:00am"],
+      },
+      "device_token": "0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx",
+      "type": "email/facebook/google/apple",
+      "social_id": "0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx",
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(signUp),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(userData),
+      );
+
+      /// Handling the response
+      if (response.statusCode == 200) {
+        print("User registered successfully: ${response.body}");
+      } else {
+        print("Failed to register user: ${response.body}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    }
   }
-
-
-
 }
